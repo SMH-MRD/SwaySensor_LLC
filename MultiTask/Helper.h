@@ -20,4 +20,5 @@ public:
 	static void put_bmp_stretch(HDC hdc, HBITMAP hbmp, POINT dst_pt, POINT src_pt, int retio_persent);
 	static int	cmnCreateShmem(LPCTSTR, DWORD, HANDLE*, LPVOID*, DWORD*);	//‹¤—Lƒƒ‚ƒŠİ’è
 	static int	cmnDeleteShMem(HANDLE*, LPVOID*);							//‹¤—Lƒƒ‚ƒŠ‰ğœ
+	static int create_file_path_of_exe_folder(LPWSTR pst_file_path, const wchar_t* filename, const wchar_t* ext);
 };

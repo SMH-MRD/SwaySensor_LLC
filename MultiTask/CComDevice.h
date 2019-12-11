@@ -12,13 +12,11 @@ extern ST_iTask g_itask;
 #define COMD_INCL_MODE_DEG	2
 
 
-typedef struct _stRIO {
-	DWORD error_status;
-	double inclination_rad_x;
-	double inclination_rad_y;
-	double inclination_deg_x;
-	double inclination_deg_y;
-}ST_RIO, *LPST_RIO;
+// dcom.ini関連
+#define RIO_SECT_OF_INIFILE				L"RIO"			//RIOセクション
+#define RIO_IP_KEY_OF_INIFILE			L"RIO_IP"		
+#define RIO_PORT_KEY_OF_INIFILE			L"RIO_PORT"
+#define RIO_TIMEOUT_KEY_OF_INIFILE		L"RIO_TMOUT"
 
 
 class CComDevice :
@@ -28,15 +26,22 @@ public:
 	CComDevice();
 	~CComDevice();
 	
-	ST_RIO s_RIO;
+	WCHAR path_of_inifile[_MAX_PATH];
+
+	double inclination_rad_x;
+	double inclination_rad_y;
+	double inclination_deg_x;
+	double inclination_deg_y;
 
 	void routine_work(void *param);
 	void init_task(void *pobj);
 
-	LRESULT CALLBACK PanelProc(HWND hDlg, UINT msg, WPARAM wp, LPARAM lp);
-	void set_panel_tip_txt();//タブパネルのStaticテキストを設定
-		
+	int init_RIO();
 	int set_RIO_incl();
 	double get_RIO_incl(int mode, int axis);
+	
+	LRESULT CALLBACK PanelProc(HWND hDlg, UINT msg, WPARAM wp, LPARAM lp);
+	void set_panel_tip_txt();//タブパネルのStaticテキストを設定
+
 };
 

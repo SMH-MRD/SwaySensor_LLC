@@ -131,3 +131,24 @@ int	CHelper::cmnDeleteShMem(HANDLE* hMapFile, LPVOID* pMapTop)
 	return(ret);
 }
 
+/****************************************************************************************************************************************************
+実行ファイルフォルダ内のファイルのパスを作る
+- 引数　LPWSTR pst_file_path：パス名格納先バッファ, const wchar_t* filename　：ファイル名, const wchar_t* ext　：ファイル拡張子
+- 戻り値　0:正常完了,0以外:異常完了
+****************************************************************************************************************************************************/
+
+// ini file path
+int	CHelper::create_file_path_of_exe_folder(LPWSTR pst_file_path, const wchar_t* filename, const wchar_t* ext) 
+{
+
+	static WCHAR szDrive[_MAX_DRIVE], szPath[_MAX_PATH], szFName[_MAX_FNAME], szExt[_MAX_EXT];
+
+	GetModuleFileName(NULL, pst_file_path, (sizeof(TCHAR) * _MAX_PATH));
+	_wsplitpath_s(pst_file_path, szDrive, sizeof(szDrive), szPath, sizeof(szPath), szFName, sizeof(szFName), szExt, sizeof(szExt));
+
+	wstring wstrPathExe = szDrive; wstrPathExe += szPath;
+
+	_wmakepath_s(pst_file_path, _MAX_PATH, szDrive, szPath, filename, ext);
+	
+	return 0;
+}

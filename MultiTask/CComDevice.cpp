@@ -1,11 +1,31 @@
 #include "stdafx.h"
 #include "CComDevice.h"
+#include "Helper.h"
+#include "CRioPhHandle.h"
+
 
 CComDevice::CComDevice(){}
 CComDevice::~CComDevice(){}
 
 void CComDevice::init_task(void *pobj) {
+
+	//タスクタブウィンドウの表示文字設定
 	set_panel_tip_txt();
+
+	//iniファイル読み込み
+	TCHAR wip[20], wport[16], wtimeover[16];
+	CHelper::create_file_path_of_exe_folder(path_of_inifile, L"dcom", L"ini");	//iniファイルのパスセット
+
+	//iniファイル　RIO設定読み込み
+	DWORD	str_num = GetPrivateProfileString(RIO_SECT_OF_INIFILE, RIO_IP_KEY_OF_INIFILE, L"0.0.0.0", wip, sizeof(wip), path_of_inifile);
+	WideCharToMultiByte(CP_ACP, 0, wip, -1, CRioPhHandle::sRIO_ph.ip_string, sizeof(CRioPhHandle::sRIO_ph.ip_string), NULL, NULL);
+
+	str_num = GetPrivateProfileString(RIO_SECT_OF_INIFILE, RIO_PORT_KEY_OF_INIFILE, L"502", wport, sizeof(wport), path_of_inifile);
+	CRioPhHandle::sRIO_ph.port_num = _ttoi(wport);
+
+	str_num = GetPrivateProfileString(RIO_SECT_OF_INIFILE, RIO_TIMEOUT_KEY_OF_INIFILE, L"5000", wtimeover, sizeof(wtimeover), path_of_inifile);
+	CRioPhHandle::sRIO_ph.timeOut = _ttoi(wtimeover);
+	
 	return;
 };
 
@@ -260,31 +280,34 @@ void CComDevice::set_panel_tip_txt()
 double CComDevice::get_RIO_incl(int mode, int axis) {
 	if (axis == COMD_INCL_AXIS_X) {
 		if (COMD_INCL_MODE_RAD) {
-			return s_RIO.inclination_rad_x;
+			return inclination_rad_x;
 		}
 		else if (COMD_INCL_MODE_DEG) {
-			return s_RIO.inclination_deg_x;
+			return inclination_deg_x;
 		}
 		else return 0.0;
 	}
 	else if (axis == COMD_INCL_AXIS_Y) {
 		if (COMD_INCL_MODE_RAD) {
-			return s_RIO.inclination_rad_y;
+			return inclination_rad_y;
 		}
 		else if (COMD_INCL_MODE_DEG) {
-			return s_RIO.inclination_deg_y;
+			return inclination_deg_y;
 		}
 		else return 0.0;
 	}
+	return 0;
 };
 int CComDevice::set_RIO_incl() {
-	s_RIO.inclination_rad_x += 3.14/180.0;
-	if(s_RIO.inclination_rad_x > 3.14/180 * 30.0){
-		s_RIO.inclination_rad_x = -1.0 * 3.14 / 180 * 30.0;
+	inclination_rad_x += 3.14/180.0;
+	if(inclination_rad_x > 3.14/180 * 30.0){
+		inclination_rad_x = -1.0 * 3.14 / 180 * 30.0;
 	}
-	s_RIO.inclination_rad_y -= 3.14 / 180.0;
-	if (s_RIO.inclination_rad_y < -1.0 * 3.14 / 180 * 30.0) {
-		s_RIO.inclination_rad_y = 3.14 / 180 * 30.0;
+	inclination_rad_y -= 3.14 / 180.0;
+	if (inclination_rad_y < -1.0 * 3.14 / 180 * 30.0) {
+		inclination_rad_y = 3.14 / 180 * 30.0;
 	}
 	return 0;
 };
+
+

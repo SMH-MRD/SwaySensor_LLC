@@ -90,11 +90,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.\src;C:\Users\Kobayashi\source\repos\SwaySensor_LLC\MultiTask\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;winmm.lib;ModbusTCP.lib;modbus.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;ModbusTCP.lib;modbus.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>.\lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -127,13 +128,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.\src;C:\Users\Kobayashi\source\repos\SwaySensor_LLC\MultiTask\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;winmm.lib;ModbusTCP.lib;modbus.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;ModbusTCP.lib;modbus.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>.\lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -165,6 +167,7 @@
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CManager.h" />
     <ClInclude Include="CPublicRelation.h" />
+    <ClInclude Include="CRioPhHandle.h" />
     <ClInclude Include="CTaskObj.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="MultiTask.h" />
@@ -181,6 +184,7 @@
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CManager.cpp" />
     <ClCompile Include="CPublicRelation.cpp" />
+    <ClCompile Include="CRioPhHandle.cpp" />
     <ClCompile Include="CTaskObj.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="MultiTask.cpp" />

@@ -17,6 +17,7 @@ extern ST_iTask g_itask;
 #define RIO_IP_KEY_OF_INIFILE			L"RIO_IP"		
 #define RIO_PORT_KEY_OF_INIFILE			L"RIO_PORT"
 #define RIO_TIMEOUT_KEY_OF_INIFILE		L"RIO_TMOUT"
+#define RIO_TIMEOUT_KEY_OF_SLAVE		L"RIO_SLAVE_ADDR"
 
 
 class CComDevice :
@@ -36,7 +37,6 @@ public:
 	void routine_work(void *param);
 	void init_task(void *pobj);
 
-	int init_RIO();
 	int set_RIO_incl();
 	double get_RIO_incl(int mode, int axis);
 	

@@ -13,30 +13,36 @@ void CComDevice::init_task(void *pobj) {
 	set_panel_tip_txt();
 
 	//iniファイル読み込み
-	TCHAR wip[20], wport[16], wtimeover[16];
+	TCHAR wip[20], wport[16], wtimeover[16], wslave[4];
 	CHelper::create_file_path_of_exe_folder(path_of_inifile, L"dcom", L"ini");	//iniファイルのパスセット
 
 	//iniファイル　RIO設定読み込み
 	DWORD	str_num = GetPrivateProfileString(RIO_SECT_OF_INIFILE, RIO_IP_KEY_OF_INIFILE, L"0.0.0.0", wip, sizeof(wip), path_of_inifile);
-	WideCharToMultiByte(CP_ACP, 0, wip, -1, CRioPhHandle::sRIO_ph.ip_string, sizeof(CRioPhHandle::sRIO_ph.ip_string), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, wip, -1, CRioPhHandle::stRIO_ph.ip_string, sizeof(CRioPhHandle::stRIO_ph.ip_string), NULL, NULL);
 
 	str_num = GetPrivateProfileString(RIO_SECT_OF_INIFILE, RIO_PORT_KEY_OF_INIFILE, L"502", wport, sizeof(wport), path_of_inifile);
-	CRioPhHandle::sRIO_ph.port_num = _ttoi(wport);
+	CRioPhHandle::stRIO_ph.port_num = _ttoi(wport);
 
 	str_num = GetPrivateProfileString(RIO_SECT_OF_INIFILE, RIO_TIMEOUT_KEY_OF_INIFILE, L"5000", wtimeover, sizeof(wtimeover), path_of_inifile);
-	CRioPhHandle::sRIO_ph.timeOut = _ttoi(wtimeover);
+	CRioPhHandle::stRIO_ph.timeOut = _ttoi(wtimeover);
+
+	str_num = GetPrivateProfileString(RIO_SECT_OF_INIFILE, RIO_TIMEOUT_KEY_OF_SLAVE, L"1", wslave, sizeof(wslave), path_of_inifile);
+	CRioPhHandle::stRIO_ph.slave_addr = _ttoi(wslave);
+	CRioPhHandle::stRIO_ph.bRIO_init_ok = false;
 	
 	return;
 };
 
 void CComDevice::routine_work(void *param) {
 	
+	CRioPhHandle::RioPhThread(&CRioPhHandle::stRIO_ph);
+	
 	set_RIO_incl();
 
 	double incl_x = get_RIO_incl(COMD_INCL_MODE_RAD, COMD_INCL_AXIS_X);
 	double incl_y = get_RIO_incl(COMD_INCL_MODE_RAD, COMD_INCL_AXIS_Y);
 	
-	ws  << L" X(rad): "<< incl_x << L"   Y(rad): "<< incl_y << L" working!" << *(inf.psys_counter)%100;
+	ws  << L" P1 mA: "<< CRioPhHandle::stRIO_ph.RIO_ai_p1_mA << L"    P2 mA: "<< CRioPhHandle::stRIO_ph.RIO_ai_p2_mA << L"    ERR: " << CRioPhHandle::stRIO_ph.error_status << L" working!" << *(inf.psys_counter);
 	tweet2owner(ws.str()); ws.str(L""); ws.clear();
 
 };

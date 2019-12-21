@@ -14,13 +14,17 @@
 #define RIO_COMMAND_REGISTER				2006	// COMMAND REGISTER 
 #define RIO_COMMAND_AI_PORT_ACTIVE			0x8000	// 2006書き込みで2100-2279への設定値を有効にする
 #define RIO_PORT_REGISTER_PORT1_MODE		2120	// PORT1のmode設定レジスタ 2006書き込みで有効となる
-#define RIO_PORT_REGISTER_PORT2_MODE		2140	// PORT2のmode設定レジスタ 2006書き込みで有効となる
+#define RIO_PORT_REGISTER_PORT2_MODE		2160	// PORT2のmode設定レジスタ 2006書き込みで有効となる
+#define RIO_PORT_REGISTER_PORT1_IN_LENGTH	2126	// PORT1のIN Data Length設定レジスタ 2006書き込みで有効となる
+#define RIO_PORT_REGISTER_PORT1_OUT_LENGTH	2127	// PORT1のIN Data Length設定レジスタ 2006書き込みで有効となる
+#define RIO_PORT_REGISTER_PORT2_IN_LENGTH	2166	// PORT2のOUT Data Length設定レジスタ 2006書き込みで有効となる
+#define RIO_PORT_REGISTER_PORT2_OUT_LENGTH	2167	// PORT1のOUT Data Length設定レジスタ 2006書き込みで有効となる
 #define RIO_PORT_REGISTER_MODE_IOLINK		0x0004	// 2120,2140への設定値　アナログユニットはIO LINKモード04とする
 #define RIO_PORT1_IN_ADDRESS				8002	// PORT1読み込みデータアドレス
-#define RIO_PORT2_IN_ADDRESS				8018	// PORT2読み込みデータアドレス 
-#define RIO_PORT1_OUT_ADDRESS				9002	// PORT1読み込みデータアドレス
-#define RIO_PORT2_OUT_ADDRESS				9018	// PORT2読み込みデータアドレス 
-#define RIO_COMMAND_AI_PARA_SET				0x8010	// AI: 15bit set command  8,9bit filter 4,5 format->0 sampling filter, S7 format
+#define RIO_PORT2_IN_ADDRESS				8019	// PORT2読み込みデータアドレス 
+#define RIO_PORT1_OUT_ADDRESS				9002	// PORT1書き込みデータアドレス
+#define RIO_PORT2_OUT_ADDRESS				9019	// PORT2書き込みデータアドレス 
+#define RIO_COMMAND_AI_PARA_SET				0x8000	// AI: 15bit set command  8,9bit filter 4,5 format->0 sampling filter, S7 format
 
 
 #define RIO_PORT_NUM		8

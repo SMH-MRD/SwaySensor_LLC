@@ -42,7 +42,23 @@ void CComDevice::routine_work(void *param) {
 	double incl_x = get_RIO_incl(COMD_INCL_MODE_RAD, COMD_INCL_AXIS_X);
 	double incl_y = get_RIO_incl(COMD_INCL_MODE_RAD, COMD_INCL_AXIS_Y);
 	
-	ws  << L" P1 mA: "<< CRioPhHandle::stRIO_ph.RIO_ai_p1_mA << L"    P2 mA: "<< CRioPhHandle::stRIO_ph.RIO_ai_p2_mA << L"    ERR: " << CRioPhHandle::stRIO_ph.error_status << L" working!" << *(inf.psys_counter);
+	uint16_t tmp_i1= CRioPhHandle::stRIO_ph.RIO_ai_port1.uint16 &= 0x7FF8;
+	uint16_t tmp_i2 = CRioPhHandle::stRIO_ph.RIO_ai_port2.uint16 &= 0x7FF8;
+
+	UNION_WandB tempi1, tempi2;
+	tempi1.uint8[0] = CRioPhHandle::stRIO_ph.RIO_ai_port1.uint8[1];
+	tempi1.uint8[1] = CRioPhHandle::stRIO_ph.RIO_ai_port1.uint8[0];
+	tempi2.uint8[0] = CRioPhHandle::stRIO_ph.RIO_ai_port2.uint8[1];
+	tempi2.uint8[1] = CRioPhHandle::stRIO_ph.RIO_ai_port2.uint8[0];
+
+	tempi1.uint16 &= 0x7ff8;
+	tempi2.uint16 &= 0x7ff8;
+
+	double i1_mA = 4.0 + 16.0*tempi1.uint16 / 27648;
+	double i2_mA = 4.0 + 16.0*tempi2.uint16 / 27648;
+
+
+	ws  << L" P1: "<< i1_mA << L"    P2 : "<< i2_mA << L"    ERR: " << CRioPhHandle::stRIO_ph.error_status << L" working!" << *(inf.psys_counter);
 	tweet2owner(ws.str()); ws.str(L""); ws.clear();
 
 };

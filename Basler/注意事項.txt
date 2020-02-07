@@ -1,0 +1,5 @@
+注意！！
+Basler\pylon 6\Development\include\pylon以下のEnumParameterT.hを置き換える
+
+詳細：
+https://developercommunity.visualstudio.com/content/problem/754327/visual-studio-1631-fails-at-compiling-template-cod.html

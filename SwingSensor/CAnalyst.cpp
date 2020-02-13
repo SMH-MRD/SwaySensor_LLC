@@ -10,6 +10,10 @@
 #define V_MAX 255
 #define V_MIN 50
 
+#define BEVEL_MAX_ANGLE	30.0
+
+//#define DEBUG
+
 /************************************/
 /* 変数定義							*/
 /************************************/
@@ -59,15 +63,14 @@ void CAnalyst::ImageProc(void) {
 		}
 	}
 
-//	image = imread("test3.png", IMREAD_COLOR);
-
 	Mat hsvImage;
 	/* ①画像色をBGR→HSVに変換 */
 	cvtColor(image, hsvImage, COLOR_BGR2HSV);
+#ifdef DEBUG
+	namedWindow("hsvImage", WINDOW_NORMAL | WINDOW_KEEPRATIO | WINDOW_GUI_EXPANDED);//other options:CV_AUTOSIZE,CV_FREERATIO
 
-//	namedWindow("hsvImage", WINDOW_NORMAL | WINDOW_KEEPRATIO | WINDOW_GUI_EXPANDED);//other options:CV_AUTOSIZE,CV_FREERATIO
-
-//	imshow("hsvImage", hsvImage);
+	imshow("hsvImage", hsvImage);
+#endif
 
 	/* ②色相でマスク画像作成 */
 	UINT32 maskEn, maskMin, maskMax;
@@ -137,11 +140,11 @@ void CAnalyst::ImageProc(void) {
 		m_cSharedData->SetImage(IMAGE_ID_MASK_B, binarizeImage);
 		m_bSaveImageArea = FALSE;
 	}
+#ifdef DEBUG
+	namedWindow("maskImage", WINDOW_NORMAL | WINDOW_KEEPRATIO | WINDOW_GUI_EXPANDED);//other options:CV_AUTOSIZE,CV_FREERATIO
 
-//	namedWindow("maskImage", WINDOW_NORMAL | WINDOW_KEEPRATIO | WINDOW_GUI_EXPANDED);//other options:CV_AUTOSIZE,CV_FREERATIO
-
-//	imshow("maskImage", binarizeImage);
-
+	imshow("maskImage", binarizeImage);
+#endif
 	/* ④領域抽出(ROI)でターゲット認識 */
 	/* 輪郭抽出 */
 	vector<vector<Point>> contours;
@@ -161,13 +164,13 @@ void CAnalyst::ImageProc(void) {
 	else {
 		CalcCenterOfGravity2(image, contours, &posX, &posY);
 	}
+#ifdef DEBUG
+	namedWindow("procImage", WINDOW_NORMAL | WINDOW_KEEPRATIO | WINDOW_GUI_EXPANDED);//other options:CV_AUTOSIZE,CV_FREERATIO
 
-//	namedWindow("procImage", WINDOW_NORMAL | WINDOW_KEEPRATIO | WINDOW_GUI_EXPANDED);//other options:CV_AUTOSIZE,CV_FREERATIO
+	imshow("procImage", image);
 
-//	imshow("procImage", image);
-
-//	waitKey(0);
-
+	waitKey(0);
+#endif
 	STProcData stProcData;
 	stProcData.image = image;
 	stProcData.posx = posX;
@@ -186,6 +189,8 @@ void CAnalyst::ImageProc(void) {
 	QueryPerformanceCounter(&end);
 	LONGLONG span = end.QuadPart - start.QuadPart;
 	LONGLONG usec = (span * 1000000L) / frequency.QuadPart;
+
+	m_cSharedData->SetParam(PARAM_ID_DOUBLE_PROC_TIME, (DOUBLE)usec / 1000.0);
 }
 
 ///# 傾斜計データ処理 ***************
@@ -196,30 +201,30 @@ void CAnalyst::BevelProc(void) {
 
 	if (m_cSharedData->GetBevelData(BEVEL_ID_PORT_1_MA, &port1AnaData) == RESULT_OK) {
 		if (isnan(port1AnaData)) {
-			port1AngleData = NAN;
+			port1AngleData = (DOUBLE)NAN;
 		}
 		else if (port1AnaData < 12.0) {
 			// 12.0mA未満ならば角度は-方向に倒れている(4mAで-30度)
-			port1AngleData = ((port1AnaData - 4.0) - 8.0) / 8.0 * 30.0;
+			port1AngleData = ((port1AnaData - 4.0) - 8.0) / 8.0 * BEVEL_MAX_ANGLE;
 		}
 		else {
 			// 12.0mA以上ならば角度は+方向に倒れている(20mAで30度)
-			port1AngleData = (port1AnaData - 12.0) / 8.0 * 30.0;
+			port1AngleData = (port1AnaData - 12.0) / 8.0 * BEVEL_MAX_ANGLE;
 		}
 		m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_ANGLE, port1AngleData);
 	}
 
 	if (m_cSharedData->GetBevelData(BEVEL_ID_PORT_2_MA, &port2AnaData) == RESULT_OK) {
 		if (isnan(port2AnaData)) {
-			port2AngleData = NAN;
+			port2AngleData = (DOUBLE)NAN;
 		}
 		else if (port2AnaData < 12.0) {
 			// 12.0mA未満ならば角度は-方向に倒れている(4mAで-30度)
-			port2AngleData = ((port2AnaData - 4.0) - 8.0) / 8.0 * 30.0;
+			port2AngleData = ((port2AnaData - 4.0) - 8.0) / 8.0 * BEVEL_MAX_ANGLE;
 		}
 		else {
 			// 12.0mA以上ならば角度は+方向に倒れている(20mAで30度)
-			port2AngleData = (port2AnaData - 12.0) / 8.0 * 30.0;
+			port2AngleData = (port2AnaData - 12.0) / 8.0 * BEVEL_MAX_ANGLE;
 		}
 		m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_ANGLE, port2AngleData);
 	}

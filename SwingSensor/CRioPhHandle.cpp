@@ -17,7 +17,7 @@ typedef struct _stRIORegTable {
 ST_RioPh CRioPhHandle::stRIO_ph;
 static CSharedData* m_cSharedData;
 static const stRIORegTable m_stRegTable[RIO_PORT_NUM + 1] = {
-	{0, 0, 0},
+	{0, 0, 0},																		// 0は欠番扱いとしておく
 	{RIO_PORT_REGISTER_PORT1_MODE, RIO_PORT1_IN_ADDRESS, RIO_PORT1_OUT_ADDRESS},
 	{RIO_PORT_REGISTER_PORT2_MODE, RIO_PORT2_IN_ADDRESS, RIO_PORT2_OUT_ADDRESS},
 	{RIO_PORT_REGISTER_PORT3_MODE, RIO_PORT3_IN_ADDRESS, RIO_PORT3_OUT_ADDRESS},
@@ -31,14 +31,14 @@ static const stRIORegTable m_stRegTable[RIO_PORT_NUM + 1] = {
 CRioPhHandle::CRioPhHandle(){
 	stRIO_ph.bRIO_init_ok = false;
 	m_cSharedData = new CSharedData();
-	m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_ANALOG, NAN);
-	m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_MA, NAN);
-	m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_ANALOG, NAN);
-	m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_MA, NAN);
+	m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_ANALOG, (DOUBLE)NAN);
+	m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_MA, (DOUBLE)NAN);
+	m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_ANALOG, (DOUBLE)NAN);
+	m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_MA, (DOUBLE)NAN);
 }
 CRioPhHandle::~CRioPhHandle(){}
 
-unsigned __stdcall CRioPhHandle::RioPhThread(void *pVoid) {
+unsigned CRioPhHandle::RioPhRead(void) {
 
 	if (stRIO_ph.bRIO_init_ok == false) {
 		if (!init_RIO()) {
@@ -53,8 +53,8 @@ unsigned __stdcall CRioPhHandle::RioPhThread(void *pVoid) {
 		if (stRIO_ph.error_code) {
 			stRIO_ph.error_status = RIO_ERR_TYPE_AI_READ1;
 			stRIO_ph.bRIO_init_ok = false;
-			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_ANALOG, NAN);
-			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_MA, NAN);
+			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_ANALOG, (DOUBLE)NAN);
+			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_MA, (DOUBLE)NAN);
 		}
 		else {
 			//PORT1読み込みデータ mA変換
@@ -71,8 +71,8 @@ unsigned __stdcall CRioPhHandle::RioPhThread(void *pVoid) {
 		if (stRIO_ph.error_code) {
 			stRIO_ph.error_status = RIO_ERR_TYPE_AI_READ2;
 			stRIO_ph.bRIO_init_ok = false;
-			m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_ANALOG, NAN);
-			m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_MA, NAN);
+			m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_ANALOG, (DOUBLE)NAN);
+			m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_MA, (DOUBLE)NAN);
 		}
 		else {
 			//PORT2読み込みデータ mA変換
@@ -121,7 +121,6 @@ int CRioPhHandle::init_RIO() {
 	}
 
 	//PORT2をIO LINK MODEに設定
-//	stRIO_ph.stModbusTcpReq.regAddr = RIO_PORT_REGISTER_PORT2_MODE;
 	stRIO_ph.stModbusTcpReq.regAddr = m_stRegTable[yPort].portMode;
 	stRIO_ph.error_code = modtSetdata(stRIO_ph.modbusDesc, stRIO_ph.stModbusTcpReq, stRIO_ph.setData[0].uint8);
 	if (stRIO_ph.error_code) {
@@ -158,7 +157,6 @@ int CRioPhHandle::init_RIO() {
 	}
 
 	//PORT2 AIのパラメータ設定
-//	stRIO_ph.stModbusTcpReq.regAddr = RIO_PORT2_OUT_ADDRESS;
 	stRIO_ph.stModbusTcpReq.regAddr = m_stRegTable[yPort].outAddr;
 	stRIO_ph.error_code = modtSetdata(stRIO_ph.modbusDesc, stRIO_ph.stModbusTcpReq, stRIO_ph.setData[0].uint8);
 	if (stRIO_ph.error_code) {
@@ -177,7 +175,6 @@ int CRioPhHandle::init_RIO() {
 	//PORT2読み込み設定登録
 	stRIO_ph.stModbusTcpReq_p2read.slaveAddr = stRIO_ph.slave_addr;
 	stRIO_ph.stModbusTcpReq_p2read.funcCode = MODBUS_TCPLIB_FUNCCODE_READ_REGISTER;
-//	stRIO_ph.stModbusTcpReq_p2read.regAddr = RIO_PORT2_IN_ADDRESS;
 	stRIO_ph.stModbusTcpReq_p2read.regAddr = m_stRegTable[yPort].inAddr;
 	stRIO_ph.stModbusTcpReq_p2read.dataCnt = 1;
 	stRIO_ph.stModbusTcpReq_p2read.option = 0;

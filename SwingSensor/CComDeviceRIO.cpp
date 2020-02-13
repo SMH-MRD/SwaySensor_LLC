@@ -18,7 +18,7 @@ void CComDeviceRIO::init_task(void *pobj) {
 
 void CComDeviceRIO::routine_work(void *param) {
 	
-	cRioHandle->RioPhThread(&CRioPhHandle::stRIO_ph);
+	cRioHandle->RioPhRead();
 };
 
 LRESULT CALLBACK CComDeviceRIO::PanelProc(HWND hDlg, UINT msg, WPARAM wp, LPARAM lp) {

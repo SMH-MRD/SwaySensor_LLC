@@ -4,6 +4,12 @@
 #include <Commdlg.h>
 
 /************************************/
+/* 定数定義							*/
+/************************************/
+#define DISP_PIC_WIDTH	320.0			// 表示画像サイズ横幅
+#define DISP_PIC_HEIGHT 240.0			// 表示画像サイズ高さ
+
+/************************************/
 /* 変数定義							*/
 /************************************/
 static HINSTANCE m_hInst;
@@ -106,7 +112,7 @@ void CPublicRelation::routine_work(void* param) {
 	/* 保存用に最新画像を保持しておく */
 	stProcData.image.copyTo(m_saveImage);
 
-	resize(stProcData.image, dispImage, cv::Size(), 320.0 / stProcData.image.cols, 240.0 / stProcData.image.rows);
+	resize(stProcData.image, dispImage, cv::Size(), DISP_PIC_WIDTH / stProcData.image.cols, DISP_PIC_HEIGHT / stProcData.image.rows);
 
 	char* ColorBuf = (char*)calloc(dispImage.cols * dispImage.rows * 4, sizeof(RGBQUAD));
 
@@ -127,6 +133,7 @@ void CPublicRelation::routine_work(void* param) {
 	free(ColorBuf);
 
 	SendMessage(GetDlgItem(m_hDlg, IDC_STATIC_PIC), STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bmp);
+	DeleteObject(bmp);
 
 	if (!isnan(stProcData.posx)) {
 		_stprintf_s(msg, TEXT("%.3f"), stProcData.posx);
@@ -152,7 +159,7 @@ void CPublicRelation::routine_work(void* param) {
 			return;
 		}
 	}
-	resize(maskImage, dispImage, cv::Size(), 320.0 / maskImage.cols, 240.0 / maskImage.rows);
+	resize(maskImage, dispImage, cv::Size(), DISP_PIC_WIDTH / maskImage.cols, DISP_PIC_HEIGHT / maskImage.rows);
 
 	ColorBuf = (char*)calloc(dispImage.cols * dispImage.rows * 4, sizeof(RGBQUAD));
 
@@ -173,6 +180,14 @@ void CPublicRelation::routine_work(void* param) {
 	free(ColorBuf);
 
 	SendMessage(GetDlgItem(m_hDlg, IDC_STATIC_PIC_MASK), STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bmp);
+	DeleteObject(bmp);
+
+	DOUBLE procTime;
+	m_cSharedData->GetParam(PARAM_ID_DOUBLE_PROC_TIME, &procTime);
+	if (!isnan(procTime)) {
+		_stprintf_s(msg, TEXT("%.3f"), procTime);
+		SetWindowText(GetDlgItem(m_hDlg, IDC_EDIT_PROC_TIME), msg);
+	}
 }
 
 ///# 関数: メインダイアログ処理 ***************
@@ -189,11 +204,11 @@ LRESULT CALLBACK DispWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		switch (wmId)
 		{
 		case IDC_BUTTON_CAM_START:
-			m_cSharedData->SetParam(PARAM_ID_CAM_PROC, TRUE);
+			m_cSharedData->SetParam(PARAM_ID_CAM_PROC, (UINT32)TRUE);
 			EnableWindow(GetDlgItem(m_hDlg, IDC_BUTTON_PIC_PROC), FALSE);
 			break;
 		case IDC_BUTTON_CAM_STOP:
-			m_cSharedData->SetParam(PARAM_ID_CAM_PROC, FALSE);
+			m_cSharedData->SetParam(PARAM_ID_CAM_PROC, (UINT32)FALSE);
 			EnableWindow(GetDlgItem(m_hDlg, IDC_BUTTON_PIC_PROC), TRUE);
 			break;
 		case IDC_BUTTON_SAVE:
@@ -232,7 +247,7 @@ LRESULT CALLBACK DispWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 					string str = cstr;
 					m_cSharedData->SetParam(PARAM_ID_STR_PROC_FILENAME, str);
 					free(cstr);
-					m_cSharedData->SetParam(PARAM_ID_PIC_PROC_FLAG, TRUE);
+					m_cSharedData->SetParam(PARAM_ID_PIC_PROC_FLAG, (UINT32)TRUE);
 				}
 			}
 
@@ -514,10 +529,10 @@ LRESULT CALLBACK ParamWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 			value = SendMessage(GetDlgItem(m_hParamDlg, IDC_RADIO_COG_ALL), BM_GETCHECK, 0, 0);
 			if (value == TRUE) {
-				m_cSharedData->SetParam(PARAM_ID_PIC_COG_ALGO, COG_ALGO_KIND_ALL);
+				m_cSharedData->SetParam(PARAM_ID_PIC_COG_ALGO, (UINT32)COG_ALGO_KIND_ALL);
 			}
 			else {
-				m_cSharedData->SetParam(PARAM_ID_PIC_COG_ALGO, COG_ALGO_KIND_LEN);
+				m_cSharedData->SetParam(PARAM_ID_PIC_COG_ALGO, (UINT32)COG_ALGO_KIND_LEN);
 			}
 			break;
 		}

@@ -259,7 +259,7 @@ static void CameraCaptureStart(void) {
 
 ///# ŠÖ”: ‰æ‘œƒtƒ@ƒCƒ‹ˆ— ***************
 static void ImageProcStart(void) {
-	m_cSharedData->SetParam(PARAM_ID_PIC_PROC_FLAG, FALSE);
+	m_cSharedData->SetParam(PARAM_ID_PIC_PROC_FLAG, (UINT32)FALSE);
 
 	string fileName;
 	Mat fileData;

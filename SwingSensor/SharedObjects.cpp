@@ -29,12 +29,14 @@ static STMngProcData m_stProcImage[IMAGE_ID_PROC_MAX];
 static STMngBevelData m_stBevelData[BEVEL_ID_MAX];
 static UINT32 m_u32Param[PARAM_ID_MAX];
 static string m_strParam[PARAM_ID_STR_MAX];
+static DOUBLE m_dParam[PARAM_ID_DOUBLE_MAX];
 
 static CRITICAL_SECTION csImage[IMAGE_ID_CAM_MAX];
 static CRITICAL_SECTION csProcImage[IMAGE_ID_PROC_MAX];
 static CRITICAL_SECTION csBevel[BEVEL_ID_MAX];
 static CRITICAL_SECTION csParam[PARAM_ID_MAX];
 static CRITICAL_SECTION csStrParam[PARAM_ID_STR_MAX];
+static CRITICAL_SECTION csDoubleParam[PARAM_ID_DOUBLE_MAX];
 
 /************************************/
 /* 関数プロトタイプ					*/
@@ -61,6 +63,10 @@ void CSharedData::InitSharedData(void) {
 
 	for (UINT ii = 0; ii < PARAM_ID_STR_MAX; ii++) {
 		InitializeCriticalSection(&csStrParam[ii]);
+	}
+
+	for (UINT ii = 0; ii < PARAM_ID_DOUBLE_MAX; ii++) {
+		InitializeCriticalSection(&csDoubleParam[ii]);
 	}
 }
 
@@ -221,6 +227,35 @@ INT CSharedData::GetParam(UINT8 id, string* str) {
 	EnterCriticalSection(&csStrParam[id]);
 	*str = m_strParam[id];
 	LeaveCriticalSection(&csStrParam[id]);
+
+	return RESULT_OK;
+}
+
+///# 関数: データ設定処理 ***************
+INT CSharedData::SetParam(UINT8 id, DOUBLE data) {
+	if (id >= PARAM_ID_MAX) {
+		return RESULT_NG_INVALID;
+	}
+
+	EnterCriticalSection(&csDoubleParam[id]);
+	m_dParam[id] = data;
+	LeaveCriticalSection(&csDoubleParam[id]);
+
+	return RESULT_OK;
+}
+
+///# 関数: データ取得処理 ***************
+INT CSharedData::GetParam(UINT8 id, DOUBLE* data) {
+	if (id >= PARAM_ID_MAX) {
+		return RESULT_NG_INVALID;
+	}
+	if (data == NULL) {
+		return RESULT_NG_INVALID;
+	}
+
+	EnterCriticalSection(&csDoubleParam[id]);
+	*data = m_dParam[id];
+	LeaveCriticalSection(&csDoubleParam[id]);
 
 	return RESULT_OK;
 }

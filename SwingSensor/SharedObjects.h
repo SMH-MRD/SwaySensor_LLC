@@ -62,6 +62,11 @@ enum {
 };
 
 enum {
+	PARAM_ID_DOUBLE_PROC_TIME = 0,		// 画処理時間
+	PARAM_ID_DOUBLE_MAX
+};
+
+enum {
 	COG_ALGO_KIND_ALL = 0,				// 重心位置算出アルゴリズム(全輪郭点)
 	COG_ALGO_KIND_LEN					// 重心位置算出アルゴリズム(最大輪郭長)
 };
@@ -95,5 +100,7 @@ public:
 	INT GetParam(UINT8 id, UINT32* data);
 	INT SetParam(UINT8 id, string str);
 	INT GetParam(UINT8 id, string* str);
+	INT SetParam(UINT8 id, DOUBLE data);
+	INT GetParam(UINT8 id, DOUBLE* data);
 };
 

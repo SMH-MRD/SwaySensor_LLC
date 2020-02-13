@@ -83,9 +83,7 @@ public:
 	~CRioPhHandle();
 
 	static ST_RioPh stRIO_ph;
-	static unsigned __stdcall RioPhThread(void *pVoid);
+	static unsigned RioPhRead(void);
 	static int init_RIO();
-	static int read_AI();
-
 };
 

@@ -57,11 +57,12 @@ unsigned CRioPhHandle::RioPhRead(void) {
 			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_MA, (DOUBLE)NAN);
 		}
 		else {
+			UINT temp = (stRIO_ph.RIO_ai_port1.uint8[0] << 8) | stRIO_ph.RIO_ai_port1.uint8[1];
 			//PORT1読み込みデータ mA変換
-			if (stRIO_ph.RIO_ai_port1.uint16 == 0x7FFF) stRIO_ph.RIO_ai_p1_mA = 22.81;
-			else if (stRIO_ph.RIO_ai_port1.uint16 == 0x8000) stRIO_ph.RIO_ai_p1_mA = 1.186;
-			else stRIO_ph.RIO_ai_p1_mA = 4.0 + 16.0 / 65536.0 * (double)(stRIO_ph.RIO_ai_port1.uint16);
-			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_ANALOG, (double)stRIO_ph.RIO_ai_port1.uint16);
+			if (temp == 0x7FFF) stRIO_ph.RIO_ai_p1_mA = 22.81;
+			else if (temp == 0x8000) stRIO_ph.RIO_ai_p1_mA = 1.186;
+			else stRIO_ph.RIO_ai_p1_mA = 4.0 + 16.0 / 30000.0 * (double)(temp);
+			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_ANALOG, (double)temp);
 			m_cSharedData->SetBevelData(BEVEL_ID_PORT_1_MA, stRIO_ph.RIO_ai_p1_mA);
 		}
 	
@@ -76,10 +77,11 @@ unsigned CRioPhHandle::RioPhRead(void) {
 		}
 		else {
 			//PORT2読み込みデータ mA変換
-			if (stRIO_ph.RIO_ai_port2.uint16 == 0x7FFF) stRIO_ph.RIO_ai_p2_mA = 22.81;
-			else if (stRIO_ph.RIO_ai_port2.uint16 == 0x8000) stRIO_ph.RIO_ai_p2_mA = 1.186;
-			else stRIO_ph.RIO_ai_p2_mA = 4.0 + 16.0 / 65536.0 * (double)(stRIO_ph.RIO_ai_port2.uint16);
-			m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_ANALOG, (double)stRIO_ph.RIO_ai_port2.uint16);
+			UINT temp = (stRIO_ph.RIO_ai_port2.uint8[0] << 8) | stRIO_ph.RIO_ai_port2.uint8[1];
+			if (temp == 0x7FFF) stRIO_ph.RIO_ai_p2_mA = 22.81;
+			else if (temp == 0x8000) stRIO_ph.RIO_ai_p2_mA = 1.186;
+			else stRIO_ph.RIO_ai_p2_mA = 4.0 + 16.0 / 30000.0 * (double)(temp);
+			m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_ANALOG, (double)temp);
 			m_cSharedData->SetBevelData(BEVEL_ID_PORT_2_MA, stRIO_ph.RIO_ai_p2_mA);
 		}
 	}
